@@ -3,9 +3,9 @@
 // file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef LUABIND_COPY_POLICY_081021_HPP
-# define LUABIND_COPY_POLICY_081021_HPP
+#define LUABIND_COPY_POLICY_081021_HPP
 
-# include <luabind/detail/policy.hpp>
+#include <luabind/detail/policy.hpp>
 
 namespace luabind {
 
@@ -50,4 +50,3 @@ namespace detail
 } // namespace luabind
 
 #endif // LUABIND_COPY_POLICY_081021_HPP
-

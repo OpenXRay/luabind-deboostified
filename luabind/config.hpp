@@ -100,6 +100,14 @@
 # define LUABIND_API
 #endif
 
+#ifndef _WIN32
+#include <cstddef>
+#define __cdecl
+#ifndef _FARQ
+#define _FARQ
+#endif
+#endif
+
 // This switches between using tag arguments / structure specialization for code size tests
 #define LUABIND_NO_INTERNAL_TAG_ARGUMENTS
 
@@ -120,4 +128,3 @@ const int no_match = -(detail::max_argument_count*detail::max_hierarchy_depth + 
 #include <luabind/types.hpp>
 
 #endif // LUABIND_CONFIG_HPP_INCLUDED
-
