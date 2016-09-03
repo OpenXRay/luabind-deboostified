@@ -4,3 +4,10 @@ doc/*.html
 doc/version.rst
 build
 lua
+/CMakeFiles
+/doc
+/src/CMakeFiles
+/cmake
+/test/CMakeFiles
+/test
+/src

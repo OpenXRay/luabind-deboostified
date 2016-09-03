@@ -97,7 +97,7 @@ typename MEMORY_ALLOCATOR::const_pointer MEMORY_ALLOCATOR::address(const_referen
 }
 
 TEMPLATE_SPECIALIZATION
-typename MEMORY_ALLOCATOR::pointer MEMORY_ALLOCATOR::allocate(size_type n, void const* p = 0) const
+typename MEMORY_ALLOCATOR::pointer MEMORY_ALLOCATOR::allocate(size_type n, void const* p) const
 {
     pointer result = (pointer)detail::call_allocator(p, n * sizeof(T));
     if (!n)
