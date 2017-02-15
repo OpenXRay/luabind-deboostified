@@ -9,6 +9,7 @@
 #include <luabind/make_function.hpp>
 #include <luabind/detail/conversion_policies/conversion_policies.hpp>
 #include <luabind/detail/object.hpp>
+#include <luabind/lua_extensions.hpp>
 
 namespace luabind { namespace detail {
 
@@ -111,9 +112,11 @@ void invoke_context::format_error(
     char const* function_name =
         overloads->name.empty() ? "<unknown>" : overloads->name.c_str();
 
+    int stacksize = lua_gettop(L);
+		
     if (candidate_index == 0)
     {
-        int stacksize = lua_gettop(L);
+        // Overloads
         lua_pushstring(L, "No matching overload found, candidates:\n");
         int count = 0;
         for (function_object const* f = overloads; f != 0; f = f->next)
@@ -123,12 +126,10 @@ void invoke_context::format_error(
             f->format_signature(L, function_name);
             ++count;
         }
-        lua_concat(L, lua_gettop(L) - stacksize);
     }
     else
     {
         // Ambiguous
-        int stacksize = lua_gettop(L);
         lua_pushstring(L, "Ambiguous, candidates:\n");
         for (int i = 0; i < candidate_index; ++i)
         {
@@ -136,8 +137,30 @@ void invoke_context::format_error(
                 lua_pushstring(L, "\n");
             candidates[i]->format_signature(L, function_name);
         }
-        lua_concat(L, lua_gettop(L) - stacksize);
     }
+	
+	// Print all passed arguments and their types
+	lua_pushfstring(L, "\nPassed arguments [%d]: ", stacksize); // Args total cnt
+	if (stacksize == 0)
+		lua_pushstring(L, "<zero arguments>\n");
+	else
+	{
+		for (int _index = 1; _index <= stacksize; _index++)
+		{
+			if (_index > 1)
+				lua_pushstring(L, ", ");
+
+			// Arg Type
+			lua_pushstring(L, lua_typename(L, lua_type(L, _index)));
+			// Arg Value
+			lua_pushstring(L, " (");
+			const char* text = lua52L_tolstring(L, _index, NULL); // automatically pushed to stack
+			lua_pushstring(L, ")");
+		}
+		lua_pushstring(L, "\n");
+	}
+
+	lua_concat(L, lua_gettop(L) - stacksize);	
 }
 
 }} // namespace luabind::detail
