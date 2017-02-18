@@ -179,20 +179,18 @@ namespace luabind {
 	{
 		static int compute_score(lua_State* L, int index)
 		{
-#ifndef LUABIND_XRAY_DISABLE_BACKWARD_COMPATIBILITY
-            int type = lua_type(L, index);
+#ifndef LUABIND_XRAY_NO_BACKWARDS_COMPATIBILITY
+			int type = lua_type(L, index);
 
-            if (type == LUA_TSTRING)
-                return 0;
+			if (type == LUA_TSTRING)
+				return 0;
 
-            if (type == LUA_TNUMBER)
-                return 1;
+			if (type == LUA_TNUMBER)
+				return 1;
 
-            //TODO: xxx: LUA_TNIL too?
-
-            return no_match;
+			return no_match;
 #else
-            return lua_type(L, index) == LUA_TSTRING ? 0 : no_match;
+			return lua_type(L, index) == LUA_TSTRING ? 0 : no_match;
 #endif	
 		}
 
@@ -234,18 +232,18 @@ namespace luabind {
 		{
 			int type = lua_type(L, index);
 
-#ifndef LUABIND_XRAY_DISABLE_BACKWARD_COMPATIBILITY
-            if (type == LUA_TSTRING)
-                return 0;
+#ifndef LUABIND_XRAY_NO_BACKWARDS_COMPATIBILITY
+			if (type == LUA_TSTRING)
+				return 0;
 
-            if (type == LUA_TNUMBER)
-                return 1;
+			if (type == LUA_TNUMBER)
+				return 1;
 
-            //TODO: xxx: LUA_TNIL too?
+			// LUA_TNIL removed to prevent undefined behavior in C++ code. (nil -> "")
 
-            return no_match;
+			return no_match;
 #else
-            return (type == LUA_TSTRING || type == LUA_TNIL) ? 0 : no_match;
+			return (type == LUA_TSTRING || type == LUA_TNIL) ? 0 : no_match;
 #endif		
 		}
 

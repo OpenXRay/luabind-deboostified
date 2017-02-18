@@ -76,7 +76,7 @@
 // by luabind throws an exception (throwing exceptions through
 // C code has undefined behavior, lua is written in C).
 
-// LUABIND_XRAY_DISABLE_BACKWARD_COMPATIBILITY
+// LUABIND_XRAY_NO_BACKWARDS_COMPATIBILITY
 // In VS2015: Go to Property Manager -> Common.props -> C\C++ -> Preprocessor to turn it on\off
 // this define will turn OFF some code for backward compability with some original .lua-code
 // from XRay 1.6 Engine, like:

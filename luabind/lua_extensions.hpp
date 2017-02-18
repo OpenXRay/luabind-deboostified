@@ -10,9 +10,9 @@
 // Converts any Lua value at the given index to a C string in a reasonable format.
 // The resulting string is pushed onto the stack and also returned by the function.
 // If len is not NULL, the function also sets *len with the string length.
-// Does NOT support __tostring metamethod.
+// TODO: Does NOT support __tostring metamethod.
 
-const char *lua52L_tolstring(lua_State *L, int idx, size_t *len) {
+const char* lua52L_tolstring(lua_State* L, int idx, size_t* len) {
 	int t = lua_type(L, idx);
 
 	// if (!luaL_callmeta(L, idx, "__tostring")) {	//TODO: currently crash, re-implement in future.
