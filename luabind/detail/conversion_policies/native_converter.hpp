@@ -179,7 +179,19 @@ namespace luabind {
 	{
 		static int compute_score(lua_State* L, int index)
 		{
-			return lua_type(L, index)==LUA_TSTRING ? 0 : no_match;
+#ifndef LUABIND_XRAY_NO_BACKWARDS_COMPATIBILITY
+			int type = lua_type(L, index);
+
+			if (type == LUA_TSTRING)
+				return 0;
+
+			if (type == LUA_TNUMBER)
+				return 1;
+
+			return no_match;
+#else
+			return lua_type(L, index) == LUA_TSTRING ? 0 : no_match;
+#endif	
 		}
 
 		static luabind::string to_cpp_deferred(lua_State* L, int index)
@@ -219,7 +231,20 @@ namespace luabind {
 		static int match(lua_State* L, U, int index)
 		{
 			int type = lua_type(L, index);
+
+#ifndef LUABIND_XRAY_NO_BACKWARDS_COMPATIBILITY
+			if (type == LUA_TSTRING)
+				return 0;
+
+			if (type == LUA_TNUMBER)
+				return 1;
+
+			// LUA_TNIL removed to prevent undefined behavior in C++ code. (nil -> "")
+
+			return no_match;
+#else
 			return (type == LUA_TSTRING || type == LUA_TNIL) ? 0 : no_match;
+#endif		
 		}
 
 		template <class U>

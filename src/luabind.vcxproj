@@ -400,6 +400,7 @@
     <ClInclude Include="..\luabind\iterator_policy.hpp" />
     <ClInclude Include="..\luabind\luabind.hpp" />
     <ClInclude Include="..\luabind\lua_argument_proxy.hpp" />
+    <ClInclude Include="..\luabind\lua_extensions.hpp" />
     <ClInclude Include="..\luabind\lua_include.hpp" />
     <ClInclude Include="..\luabind\lua_index_proxy.hpp" />
     <ClInclude Include="..\luabind\lua_iterator_proxy.hpp" />
