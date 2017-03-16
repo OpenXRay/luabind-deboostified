@@ -59,12 +59,12 @@ namespace luabind { namespace detail
 	{
 		static const int value = sizeof(indirect_sizeof_test(decorated_type<T>()));
 	};
-	
+
 	namespace out_value_detail {
 
 		template< int Size >
 		struct temporary_storage_size {
-			
+
 			template< typename T, typename... Args >
 			void construct(Args&&... args)
 			{
@@ -88,7 +88,7 @@ namespace luabind { namespace detail
 			}
 
 			typename std::aligned_storage<Size>::type m_storage;
-		
+
 		};
 
 		template< typename T >
@@ -126,7 +126,6 @@ namespace luabind { namespace detail
 	{
 		enum { consumed_args = 1 };
 
-        template<class T>
 		T& to_cpp(lua_State* L, by_reference<T>, int index)
 		{
 			//specialized_converter_policy_n<1, Policies, T, lua_to_cpp> converter;
@@ -139,7 +138,7 @@ namespace luabind { namespace detail
 			return converter_.match(L, decorated_type<T>(), index);
 		}
 
-		void converter_postcall(lua_State* L, by_reference<T>, int) 
+		void converter_postcall(lua_State* L, by_reference<T>, int)
 		{
 			//specialized_converter_policy_n<2,Policies,T,cpp_to_lua> converter;
 			converter_.to_lua(L, storage_.get());
@@ -157,7 +156,6 @@ namespace luabind { namespace detail
 			return converter_.match(L, decorated_type<T>(), index);
 		}
 
-		template<class T>
 		void converter_postcall(lua_State* L, by_pointer<T>, int)
 		{
 			//specialized_converter_policy_n<2, Policies, T, cpp_to_lua> converter;
@@ -195,11 +193,11 @@ namespace luabind { namespace detail
 	{
 		enum { consumed_args = 0 };
 
-        template<class T>
+    template<class T>
 		T& to_cpp(lua_State*, by_reference<T>, int)
 		{
-			storage_.construct<T>();
-			return storage_.get<T>();
+			storage_.template construct<T>();
+			return storage_.template get<T>();
 		}
 
 		template<class T>
@@ -209,18 +207,18 @@ namespace luabind { namespace detail
 		}
 
 		template<class T>
-		void converter_postcall(lua_State* L, by_reference<T>, int) 
+		void converter_postcall(lua_State* L, by_reference<T>, int)
 		{
 			specialized_converter_policy_n<1, Policies, T, cpp_to_lua> converter;
-			converter.to_lua(L, storage_.get<T>());
-			storage_.destroy<T>();
+			converter.to_lua(L, storage_.template get<T>());
+			storage_.template destroy<T>();
 		}
 
 		template<class T>
 		T* to_cpp(lua_State*, by_pointer<T>, int)
 		{
-			storage_.construct<T>();
-			return &storage_.get<T>();
+			storage_.template construct<T>();
+			return &storage_.template get<T>();
 		}
 
 		template<class T>
@@ -230,11 +228,11 @@ namespace luabind { namespace detail
 		}
 
 		template<class T>
-		void converter_postcall(lua_State* L, by_pointer<T>, int) 
+		void converter_postcall(lua_State* L, by_pointer<T>, int)
 		{
 			specialized_converter_policy_n<1, Policies, T, cpp_to_lua> converter;
-			converter.to_lua(L, storage_.get<T>());
-			storage_.destroy<T>();
+			converter.to_lua(L, storage_.template get<T>());
+			storage_.template destroy<T>();
 		}
 
 	private:
@@ -256,7 +254,7 @@ namespace luabind { namespace detail
 			typedef pure_out_value_converter<indirect_sizeof<T>::value, Policies> type;
 		};
 	};
-	
+
 }}
 
 namespace luabind
@@ -272,4 +270,3 @@ namespace luabind
 }
 
 #endif // LUABIND_OUT_VALUE_POLICY_HPP_INCLUDED
-

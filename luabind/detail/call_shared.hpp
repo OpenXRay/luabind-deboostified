@@ -47,12 +47,12 @@ namespace luabind {
 			throw cast_failed(L, typeid(T));
 #else
 			cast_failed_callback_fun e = get_cast_failed_callback();
-			if (e) e(L, typeid(T));
+			if (e) const e(L, typeid(T));
 
 			assert(0 && "the lua function's return value could not be converted."
 				" If you want to handle the error you can use luabind::set_cast_failed_callback()");
 			std::terminate();
-#endif	
+#endif
 		}
 
 		template< typename... Args >
