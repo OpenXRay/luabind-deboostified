@@ -54,7 +54,7 @@ void report_failure(char const* str, char const* file, int line);
         TEST_REPORT_AUX("TEST_CHECK failed: \"" #x "\"", __FILE__, __LINE__)
 
 #define TEST_ERROR(x) \
-	TEST_REPORT_AUX((std::string("ERROR: \"") + x + "\"").c_str(), __FILE__, __LINE__)
+    TEST_REPORT_AUX((std::string("ERROR: \"") + x + "\"").c_str(), __FILE__, __LINE__)
 
 #define TEST_NOTHROW(x) \
 	try \
@@ -92,19 +92,45 @@ struct counted_type
 template<class T>
 int counted_type<T>::count = 0;
 
-#define DOSTRING_EXPECTED(state_, str, expected) \
+#ifdef LUABIND_NO_EXCEPTIONS
+#define DOSTRING_EXPECTED(state, str, expected) \
+{                                               \
+    try                                         \
+    {                                           \
+        dostring(state, str);                   \
+    }                                           \
+    catch (std::string const& s)                \
+    {                                           \
+        if (s != expected)                      \
+            TEST_ERROR(s.c_str());              \
+    }                                           \
+}
+
+#define DOSTRING(state_, str)                   \
 {                                               \
     try                                         \
     {                                           \
         dostring(state_, str);                  \
     }                                           \
+    catch (std::string const& s)                \
+    {                                           \
+        TEST_ERROR(s.c_str());                  \
+    }                                           \
+}
+#else
+#define DOSTRING_EXPECTED(state, str, expected) \
+{                                               \
+    try                                         \
+    {                                           \
+        dostring(state, str);                   \
+    }                                           \
     catch (luabind::error const& e)             \
     {                                           \
-		using namespace std;					\
-		if (std::strcmp(e.what(),				\
-			(char const*)expected))             \
+        using namespace std;                    \
+        if (std::strcmp(e.what(),               \
+            (char const*)expected))             \
         {                                       \
-            TEST_ERROR(e.what());				\
+            TEST_ERROR(e.what());               \
         }                                       \
     }                                           \
     catch (std::string const& s)                \
@@ -122,13 +148,14 @@ int counted_type<T>::count = 0;
     }                                           \
     catch (luabind::error const& e)             \
     {                                           \
-        TEST_ERROR(e.what());					\
+        TEST_ERROR(e.what());                   \
     }                                           \
     catch (std::string const& s)                \
     {                                           \
         TEST_ERROR(s.c_str());                  \
     }                                           \
 }
+#endif // LUABIND_NO_EXCEPTIONS
 
 #endif // TEST_050415_HPP
 

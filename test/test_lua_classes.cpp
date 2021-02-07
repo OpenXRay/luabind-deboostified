@@ -236,7 +236,11 @@ void test_main(lua_State* L)
 		LUABIND_CHECK_STACK(L);
 
 		try { call_function<int>(L, "gen_error"); }
-		catch (luabind::error const& e)
+#ifndef LUABIND_NO_EXCEPTIONS
+		catch(luabind::error const& e)
+#else
+		catch(std::exception const& e)
+#endif
 		{
             bool result(e.what() == std::string("[string \"function "
                     "gen_error()...\"]:2: assertion failed!"));
@@ -255,7 +259,11 @@ void test_main(lua_State* L)
 		LUABIND_CHECK_STACK(L);
 
 		try { call_function<void>(L, "gen_error"); }
-		catch (luabind::error const& e)
+#ifndef LUABIND_NO_EXCEPTIONS
+		catch(luabind::error const& e)
+#else
+		catch(std::exception const& e)
+#endif
 		{
             bool result(
                 e.what() == std::string("[string \"function "
@@ -268,7 +276,11 @@ void test_main(lua_State* L)
 		LUABIND_CHECK_STACK(L);
 
 		try { call_function<void, policy::adopt<0>>(L, "gen_error"); }
-		catch (luabind::error const& e)
+#ifndef LUABIND_NO_EXCEPTIONS
+		catch(luabind::error const& e)
+#else
+		catch(std::exception const& e)
+#endif
 		{
             bool result(
                 e.what() == std::string("[string \"function "

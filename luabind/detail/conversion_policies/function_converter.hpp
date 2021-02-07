@@ -81,9 +81,9 @@ namespace luabind {
 			return function<typename F::result_type>(object(from_stack(L, index)));
 		}
 
-		void to_lua(lua_State* L, F value)
+		void to_lua(lua_State* L, F value, bool default_scope = false)
 		{
-			make_function(L, value).push(L);
+			make_function(L, value, default_scope).push(L);
 		}
 	};
 

@@ -150,7 +150,11 @@ void test_main(lua_State* L)
         call_function<void>(L, "failing_fun");
         TEST_ERROR("function didn't fail when it was expected to");
     }
+#ifndef LUABIND_NO_EXCEPTIONS
     catch(luabind::error const& e)
+#else
+	catch(std::exception const& e)
+#endif
     {
         if (std::string("[string \"function failing_fun() error('expected error ...\"]:1: expected error message") != e.what())
         if (std::string("[string \"function failing_fun() error('expected "
