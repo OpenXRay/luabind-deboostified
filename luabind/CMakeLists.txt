@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.16)
 
 project(xrLuabindApi)
 
@@ -120,9 +120,8 @@ target_include_directories(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/..
 )
 
-# TODO: change PUBLIC to INTERFACE after migrating to CMake >= 3.19
 target_sources(${PROJECT_NAME}
-	PUBLIC
+	INTERFACE
 	${LUABIND_API_HEADERS}
 	${LUABIND_DETAIL_API_HEADERS}
 	${LUABIND_DEFAULT_POLICIES_HEADERS}
