@@ -107,9 +107,12 @@
 #endif
 
 #ifndef _WIN32
-#include <cstddef>
-#define __cdecl
+# include <cstddef>
+# ifndef __cdecl
+#  define __cdecl
+# endif // __cdecl
 #endif // _WIN32
+
 #ifndef _FARQ
 #define _FARQ
 #endif // _FARQ
