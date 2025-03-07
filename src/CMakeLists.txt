@@ -47,7 +47,8 @@ target_link_libraries(xrLuabind
 if (XRAY_USE_LUAJIT)
     target_link_libraries(xrLuabind PUBLIC xrLuaJIT)
 else()
-    target_link_libraries(xrLuabind PUBLIC Lua51)
+    find_package(Lua REQUIRED)
+    target_link_libraries(xrLuabind PUBLIC ${LUA_LIBRARIES})
 endif()
 
 if (MASTER_GOLD)
