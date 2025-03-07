@@ -71,7 +71,7 @@ namespace luabind {
 			if(!lua_getupvalue(L, index, 2))
 				return false;
 			void* tag = lua_touserdata(L, -1);
-			bool result = tag == &function_tag && allow_default || tag == &function_tag_ndef;
+			bool result = (tag == &function_tag && allow_default) || tag == &function_tag_ndef;
 			lua_pop(L, 1);
 			return result;
 		}
@@ -171,6 +171,7 @@ namespace luabind {
 					// Arg Value
 					lua_pushstring(L, " (");
 					const char* text = lua52L_tolstring(L, _index, NULL); // automatically pushed to stack
+					(void)text;
 					lua_pushstring(L, ")");
 				}
 			lua_pushstring(L, "\n");
