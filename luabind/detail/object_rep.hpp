@@ -95,10 +95,17 @@ namespace luabind {
 			object_rep(object_rep const&) = delete;
 			void operator=(object_rep const&) = delete;
 
+			struct dependency_ref : lua_reference
+			{
+				dependency_ref() : holds_table(false) {}
+
+				bool holds_table;
+			};
+
 			instance_holder* m_instance;
 			std::aligned_storage<32>::type m_instance_buffer;
 			class_rep* m_classrep; // the class information about this object's type
-			detail::lua_reference m_dependency_ref; // reference to lua table holding dependency references
+			dependency_ref m_dependency;
 		};
 
 		template<class T>

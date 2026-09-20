@@ -48,14 +48,61 @@ namespace luabind {
 			deallocate(m_instance);
 		}
 
+		namespace
+		{
+
+			bool is_definitely_valid_key(lua_State* L, int index)
+			{
+				switch(lua_type(L, index))
+				{
+				case LUA_TNONE:
+				case LUA_TNIL:
+				case LUA_TNUMBER:
+					return false;
+				default:
+					return true;
+				}
+			}
+
+		}
+
 		void object_rep::add_dependency(lua_State* L, int index)
 		{
-			if(!m_dependency_ref.is_valid())
+			if(index < 0 && index > LUA_REGISTRYINDEX)
+				index = lua_gettop(L) + index + 1;
+
+			if(!m_dependency.is_valid())
 			{
+				if(is_definitely_valid_key(L, index))
+				{
+					lua_pushvalue(L, index);
+					m_dependency.set(L);
+					m_dependency.holds_table = false;
+					return;
+				}
+
 				lua_newtable(L);
-				m_dependency_ref.set(L);
+				m_dependency.set(L);
+				m_dependency.holds_table = true;
 			}
-			m_dependency_ref.get(L);
+			else if(!m_dependency.holds_table)
+			{
+				m_dependency.get(L);
+				bool const duplicate = lua_rawequal(L, -1, index) != 0;
+				lua_pop(L, 1);
+
+				if(duplicate)
+					return;
+
+				lua_newtable(L);
+				m_dependency.get(L);
+				lua_pushnumber(L, 0);
+				lua_rawset(L, -3);
+				m_dependency.replace(L);
+				m_dependency.holds_table = true;
+			}
+
+			m_dependency.get(L);
 
 			lua_pushvalue(L, index);
 			lua_pushnumber(L, 0);

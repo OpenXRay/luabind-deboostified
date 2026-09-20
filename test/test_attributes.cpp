@@ -83,6 +83,8 @@ struct attribute_holder : counted_type<attribute_holder>
       : borrowed(b)
     {}
 
+    void keep(const luabind::object&) {}
+
     borrowed_attribute* borrowed;
 };
 
@@ -125,6 +127,7 @@ void test_main(lua_State* L)
             .def(constructor<borrowed_attribute*>())
             .def_readwrite(
                 "borrowed", &attribute_holder::borrowed, no_dependency())
+            .def("keep", &attribute_holder::keep, policy::dependency<1, 2>())
     ];
 
 	DOSTRING(L, "test = property()\n");
@@ -198,6 +201,44 @@ void test_main(lua_State* L)
     );
 
     TEST_CHECK(borrowed_attribute::count == 1);
+    TEST_CHECK(attribute_holder::count == 0);
+
+    DOSTRING(L,
+        "keeper = attribute_holder(borrowed)\n"
+        "owner1 = {}\n"
+        "owner2 = {}\n"
+        "weak = setmetatable({}, { __mode = 'v' })\n"
+        "weak[1] = owner1\n"
+        "weak[2] = owner2\n"
+        "keeper:keep(owner1)\n"
+        "keeper:keep(owner1)\n"
+    );
+
+    DOSTRING(L,
+        "owner1 = nil\n"
+        "collectgarbage()\n"
+        "collectgarbage()\n"
+        "assert(weak[1] ~= nil)\n"
+        "keeper:keep(owner2)\n"
+        "owner2 = nil\n"
+    );
+
+    DOSTRING(L,
+        "collectgarbage()\n"
+        "collectgarbage()\n"
+        "assert(weak[1] ~= nil)\n"
+        "assert(weak[2] ~= nil)\n"
+        "keeper = nil\n"
+    );
+
+    DOSTRING(L,
+        "collectgarbage()\n"
+        "collectgarbage()\n"
+        "collectgarbage()\n"
+        "assert(weak[1] == nil)\n"
+        "assert(weak[2] == nil)\n"
+    );
+
     TEST_CHECK(attribute_holder::count == 0);
 }
 
